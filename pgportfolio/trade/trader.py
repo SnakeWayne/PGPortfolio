@@ -91,8 +91,8 @@ class Trader:
         omega = self._agent.decide_by_history(self.generate_history_matrix(),
                                               self._last_omega.copy())
         self.trade_by_strategy(omega)
-        if self._agent_type == "nn":
-            self.rolling_train()
+        # if self._agent_type == "nn":
+        #     self.rolling_train()
         if not self.__class__.__name__=="BackTest":
             self._last_omega = omega.copy()
         logging.info('total assets are %3f BTC' % self._total_capital)
