@@ -53,6 +53,18 @@ def train_all(processes=1, device="cpu"):
     all_subdir.sort()
     pool = []
     for dir in all_subdir:
+        # if not str.isdigit(dir):
+        #     return
+        # # NOTE: logfile is for compatibility reason
+        # if not (os.path.isdir("./"+train_dir+"/"+dir+"/tensorboard") or os.path.isdir("./"+train_dir+"/"+dir+"/logfile")):
+        #     train_one(
+        #         "./" + train_dir + "/" + dir + "/netfile",
+        #         load_config(dir),
+        #         "./" + train_dir + "/" + dir + "/tensorboard",
+        #         dir, logfile_level, console_level, device)
+
+
+
         # train only if the log dir does not exist
         if not str.isdigit(dir):
             return

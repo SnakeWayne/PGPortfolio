@@ -2,15 +2,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 from __future__ import absolute_import
+
 from __future__ import division
-import tensorflow as tf
+# import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import tflearn
 
 
 class NeuralNetWork:
     def __init__(self, feature_number, rows, columns, layers, device):
-        tf_config = tf.ConfigProto()
-        self.session = tf.Session(config=tf_config)
+        tf_config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
+        self.session = tf.compat.v1.Session(config=tf_config)
         if device == "cpu":
             tf_config.gpu_options.per_process_gpu_memory_fraction = 0
         else:
