@@ -172,44 +172,46 @@ class TraderTrainer:
         :param index: sub-folder name under train_package
         :return: the result named tuple
         """
-        # self.__print_upperbound()
-        # if log_file_dir:
-        #     if self.device == "cpu":
-        #         with tf.device("/cpu:0"):
-        #             self.__init_tensor_board(log_file_dir)
-        #     else:
-        #         self.__init_tensor_board(log_file_dir)
-        # starttime = time.time()
-        #
-        # total_data_time = 0
-        # total_training_time = 0
-        # for i in range(self.train_config["steps"]):
-        #     step_start = time.time()
-        #     x, y, last_w, setw = self.next_batch()
-        #     finish_data = time.time()
-        #     total_data_time += (finish_data - step_start)
-        #     self._agent.train(x, y, last_w=last_w, setw=setw)
-        #     total_training_time += time.time() - finish_data
-        #     if i % 1000 == 0 and log_file_dir:
-        #         logging.info("average time for data accessing is %s"%(total_data_time/1000))
-        #         logging.info("average time for training is %s"%(total_training_time/1000))
-        #         total_training_time = 0
-        #         total_data_time = 0
-        #         self.log_between_steps(i)
-        #
-        # if self.save_path:
-        #     self._agent.recycle()
-        #     best_agent = NNAgent(self.config, restore_dir=self.save_path)
-        #     self._agent = best_agent
-        #
-        # pv, log_mean = self._evaluate("test", self._agent.portfolio_value, self._agent.log_mean)
-        # logging.warning('the portfolio value train No.%s is %s log_mean is %s,'
-        #                 ' the training time is %d seconds' % (index, pv, log_mean, time.time() - starttime))
-        #
+        self.__print_upperbound()
+        if log_file_dir:
+            if self.device == "cpu":
+                with tf.device("/cpu:0"):
+                    self.__init_tensor_board(log_file_dir)
+            else:
+                self.__init_tensor_board(log_file_dir)
+        starttime = time.time()
+
+        total_data_time = 0
+        total_training_time = 0
+        for i in range(self.train_config["steps"]):
+            step_start = time.time()
+            x, y, last_w, setw = self.next_batch()
+            #将x反向，将其过往30日的日收益率序列倒过来，但是后续test集合上测试数据的顺序仍然是正常的。
+            x = x[:,:,:,::-1]
+            finish_data = time.time()
+            total_data_time += (finish_data - step_start)
+            self._agent.train(x, y, last_w=last_w, setw=setw)
+            total_training_time += time.time() - finish_data
+            if i % 1000 == 0 and log_file_dir:
+                logging.info("average time for data accessing is %s"%(total_data_time/1000))
+                logging.info("average time for training is %s"%(total_training_time/1000))
+                total_training_time = 0
+                total_data_time = 0
+                self.log_between_steps(i)
+
+        if self.save_path:
+            self._agent.recycle()
+            best_agent = NNAgent(self.config, restore_dir=self.save_path)
+            self._agent = best_agent
+
+        pv, log_mean = self._evaluate("test", self._agent.portfolio_value, self._agent.log_mean)
+        logging.warning('the portfolio value train No.%s is %s log_mean is %s,'
+                        ' the training time is %d seconds' % (index, pv, log_mean, time.time() - starttime))
+        return self.__log_result_csv(index, time.time() - starttime)
         # return
 
-        # return self.__log_result_csv(index, time.time() - starttime)
-        return self.__log_result_csv(index, time.time())
+
+        # return self.__log_result_csv(index, time.time())
 
     def __log_result_csv(self, index, time):
         from pgportfolio.trade import backtest
