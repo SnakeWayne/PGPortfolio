@@ -60,7 +60,6 @@ class DataMatrices:
         self._window_size = window_size
         self._num_periods = len(self.__global_data.minor_axis)
         self.__divide_data(test_portion, portion_reversed)
-
         self._portion_reversed = portion_reversed
         self.__is_permed = is_permed
 

@@ -187,7 +187,8 @@ class TraderTrainer:
             step_start = time.time()
             x, y, last_w, setw = self.next_batch()
             #将x反向，将其过往30日的日收益率序列倒过来，但是后续test集合上测试数据的顺序仍然是正常的。
-            x = x[:,:,:,::-1]
+            #打乱样本
+            x = x[::-1,:,:,:]
             finish_data = time.time()
             total_data_time += (finish_data - step_start)
             self._agent.train(x, y, last_w=last_w, setw=setw)
