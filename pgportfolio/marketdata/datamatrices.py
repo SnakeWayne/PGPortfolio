@@ -55,7 +55,14 @@ class DataMatrices:
         # portfolio vector memory, [time, assets]
         self.__PVM = pd.DataFrame(index=self.__global_data.minor_axis,
                                   columns=self.__global_data.major_axis)
-        self.__PVM = self.__PVM.fillna(1.0 / self.__coin_no)
+        #2022.02.21更新，填充初始值的last weight用全仓股票代替。代替之后，探索是不是训练问题出在了初始值上
+        # self.__PVM.iloc[:,-1] =1
+        # self.__PVM.fillna(0,inplace=True)
+        #调整成其他值
+        self.__PVM.iloc[:, -1] = 0.1
+        self.__PVM.iloc[:, -2] = 0.9
+        #原始设定
+        # self.__PVM = self.__PVM.fillna(1.0 / self.__coin_no)
 
         self._window_size = window_size
         self._num_periods = len(self.__global_data.minor_axis)
@@ -123,6 +130,7 @@ class DataMatrices:
 
     @property
     def test_indices(self):
+        ##两个引号的第一次见，此处和self._test_ind[:-(self._window_size+1)]应该是相等的
         return self._test_ind[:-(self._window_size+1):]
 
     @property

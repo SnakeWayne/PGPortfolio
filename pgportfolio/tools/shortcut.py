@@ -1,7 +1,7 @@
 from __future__ import division,absolute_import,print_function
 from pgportfolio.trade.backtest import BackTest
 from pgportfolio.tdagent.algorithms import crp, ons, olmar, up, anticor1, pamr,\
-    best, bk, cwmr_std, eg, sp, ubah, wmamr, bcrp, cornk, m0, rmr
+    best, bk, cwmr_std, eg, sp, ubah, wmamr, bcrp, cornk, m0, rmr,just_last_asset
 
 # the dictionary of name of algorithms mapping to the constructor of tdagents
 ALGOS = {"crp": crp.CRP, "ons": ons.ONS, "olmar": olmar.OLMAR, "up": up.UP,
@@ -9,7 +9,7 @@ ALGOS = {"crp": crp.CRP, "ons": ons.ONS, "olmar": olmar.OLMAR, "up": up.UP,
          "best": best.BEST, "bk": bk.BK, "bcrp": bcrp.BCRP,
          "corn": cornk.CORNK, "m0": m0.M0, "rmr": rmr.RMR,
          "cwmr": cwmr_std.CWMR_STD, "eg": eg.EG, "sp": sp.SP, "ubah": ubah.UBAH,
-         "wmamr": wmamr.WMAMR}
+         "wmamr": wmamr.WMAMR,"just_last_asset":just_last_asset.JustLastAsset}
 
 def execute_backtest(algo, config):
     """

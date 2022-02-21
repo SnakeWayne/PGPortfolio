@@ -181,6 +181,8 @@ class NNAgent:
     # consumption vector (on each periods)
     def __pure_pc(self):
         c = self.__commission_ratio
+        ####2022.02.21猜想可能是因为每日调仓导致的收益损失，所以强制不扣费，测试下结果是不是能达到6-7倍,但似乎没效啊，真糟糕。
+        c=0
         w_t = self.__future_omega[:self.__net.input_num-1]  # rebalanced
         w_t1 = self.__net.output[1:self.__net.input_num]
         mu = 1 - tf.reduce_sum(tf.abs(w_t1[:, 1:]-w_t[:, 1:]), axis=1)*c
