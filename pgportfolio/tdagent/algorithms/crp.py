@@ -18,6 +18,7 @@ class CRP(TDAgent):
         self.b = b
 
     def decide_by_history(self, x, last_b):
+        # print(x.shape)
         x = self.get_last_rpv(x)
 
         # init b to default if necessary
@@ -25,8 +26,11 @@ class CRP(TDAgent):
         # if self.b is None:
         #     self.b = np.ones(len(x)) / len(x)
         #强制不配现金
+        # if self.b is None:
+        #     self.b = np.ones(len(x)) / (len(x)-1)
+        #     self.b[0]=0
+        #2022.02.27 22:14现在强制不配现金了。所以也没必要少一环了，直接恢复初始状态即可
         if self.b is None:
-            self.b = np.ones(len(x)) / (len(x)-1)
-            self.b[0]=0
+            self.b = np.ones(len(x)) / len(x)
         return self.b
 

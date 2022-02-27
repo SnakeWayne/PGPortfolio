@@ -122,7 +122,7 @@ OLPS summary:
 ![](https://github.com/DexHunter/nntrader/blob/dev/images/olps_algo.png)
 
 ## Plotting
-* type `python main.py --mode=plot --algos=crp,olmar,1 --labels=crp,olmar,nnagent
+* type `python main.py --mode=plot --algos=crp,1 --labels=crp,nnagent
 `,for example, to plot
 * `--algos` could be the name of the tdagent algorithms or
 the index of nnagent

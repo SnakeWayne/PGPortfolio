@@ -46,7 +46,7 @@ class HistoryManager:
         """
         return self.get_global_panel(start, end, period, features).values
 
-
+    ##2022.02.21 更新，只有现在股和债，下面尝试下四风格
     def get_global_panel(self, start, end, period=300, features=('close',)):
         """
         :param start/end: linux timestamp in seconds
@@ -55,7 +55,7 @@ class HistoryManager:
         :return a panel, [feature, coin, time]
         """
         ##相对路径会出错，暂时不知道为什么
-        bond_stock = pd.read_csv('D:/files/workStuff_2021/DRL AssetAllocation/PGPortfolio/pgportfolio/marketdata/bond_and_stock.csv',index_col=0)
+        bond_stock = pd.read_csv('D:/files/workStuff_2021/DRL AssetAllocation/PGPortfolio/pgportfolio/marketdata/four_style.csv',index_col=0)
 
         coins = bond_stock.columns
         self.__coins = coins
@@ -75,6 +75,34 @@ class HistoryManager:
                 panel = panel_fillna(panel, "both")
 
         return panel
+    # def get_global_panel(self, start, end, period=300, features=('close',)):
+    #     """
+    #     :param start/end: linux timestamp in seconds
+    #     :param period: time interval of each data access point
+    #     :param features: tuple or list of the feature names
+    #     :return a panel, [feature, coin, time]
+    #     """
+    #     ##相对路径会出错，暂时不知道为什么
+    #     bond_stock = pd.read_csv('D:/files/workStuff_2021/DRL AssetAllocation/PGPortfolio/pgportfolio/marketdata/bond_and_stock.csv',index_col=0)
+    #
+    #     coins = bond_stock.columns
+    #     self.__coins = coins
+    #
+    #     logging.info("feature type list is %s" % str(features))
+    #     self.__checkperiod(period)
+    #
+    #     time_index = [pd.to_datetime(index,format='%Y-%m-%d') for index in bond_stock.index]
+    #     bond_stock.index = time_index
+    #     panel = pd.Panel(items=features, major_axis=coins, minor_axis=time_index, dtype=np.float32)
+    #
+    #
+    #     for row_number, coin in enumerate(coins):
+    #         for feature in features:
+    #             # NOTE: transform the start date to end date
+    #             panel.loc[feature, coin, bond_stock.index] = bond_stock[coin]
+    #             panel = panel_fillna(panel, "both")
+    #
+    #     return panel
     ###2022.02.19以下是原函数，下面对数据提取部分进行修改替换
     # def get_global_panel(self, start, end, period=300, features=('close',)):
     #     """

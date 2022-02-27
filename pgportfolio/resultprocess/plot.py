@@ -163,11 +163,20 @@ def _load_from_summary(index, config):
     """
     dataframe = pd.DataFrame.from_csv("./train_package/train_summary.csv")
     ####2022.02.22，多次训练只取最后一次
-    history_string = dataframe.loc[int(index)]["backtest_test_history"]
-    # history_string = dataframe.loc[int(index)]["backtest_test_history"].values[-1]
-    ####2022.02.22，多次训练只取最后一次
-    # if not check_input_same(config, json.loads(dataframe.loc[int(index)]["config"].values[-1])):
-    if not check_input_same(config, json.loads(dataframe.loc[int(index)]["config"])):
-        raise ValueError("the date of this index is not the same as the default config")
-    return np.fromstring(history_string, sep=",")[:-1]
+    try:
+        history_string = dataframe.loc[int(index)]["backtest_test_history"]
+        # history_string = dataframe.loc[int(index)]["backtest_test_history"].values[-1]
+        ####2022.02.22，多次训练只取最后一次
+        # if not check_input_same(config, json.loads(dataframe.loc[int(index)]["config"].values[-1])):
+        if not check_input_same(config, json.loads(dataframe.loc[int(index)]["config"])):
+            raise ValueError("the date of this index is not the same as the default config")
+        return np.fromstring(history_string, sep=",")[:-1]
+    except:
+        # history_string = dataframe.loc[int(index)]["backtest_test_history"]
+        history_string = dataframe.loc[int(index)]["backtest_test_history"].values[-1]
+        ####2022.02.22，多次训练只取最后一次
+        if not check_input_same(config, json.loads(dataframe.loc[int(index)]["config"].values[-1])):
+        # if not check_input_same(config, json.loads(dataframe.loc[int(index)]["config"])):
+            raise ValueError("the date of this index is not the same as the default config")
+        return np.fromstring(history_string, sep=",")[:-1]
 

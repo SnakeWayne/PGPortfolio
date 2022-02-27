@@ -56,13 +56,14 @@ class DataMatrices:
         self.__PVM = pd.DataFrame(index=self.__global_data.minor_axis,
                                   columns=self.__global_data.major_axis)
         #2022.02.21更新，填充初始值的last weight用全仓股票代替。代替之后，探索是不是训练问题出在了初始值上
-        # self.__PVM.iloc[:,-1] =1
+        # self.__PVM.iloc[:,1] =1
         # self.__PVM.fillna(0,inplace=True)
         #调整成其他值
-        self.__PVM.iloc[:, -1] = 0.1
-        self.__PVM.iloc[:, -2] = 0.9
+        # self.__PVM.iloc[:, -1] = 0.1
+        # self.__PVM.iloc[:, -2] = 0.9
+        # self.__PVM.fillna(0,inplace=True)
         #原始设定
-        # self.__PVM = self.__PVM.fillna(1.0 / self.__coin_no)
+        self.__PVM = self.__PVM.fillna(1.0 / self.__coin_no)
 
         self._window_size = window_size
         self._num_periods = len(self.__global_data.minor_axis)
@@ -168,6 +169,8 @@ class DataMatrices:
         last_w = self.__PVM.values[indexs-1, :]
 
         def setw(w):
+            ###2022.02.21新增输出
+            # print('setting w',w)
             self.__PVM.iloc[indexs, :] = w
         M = [self.get_submatrix(index) for index in indexs]
         M = np.array(M)

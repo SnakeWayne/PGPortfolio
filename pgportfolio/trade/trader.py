@@ -38,9 +38,10 @@ class Trader:
         self._commission_rate = config["trading"]["trading_consumption"]
         self._fake_ratio = config["input"]["fake_ratio"]
         self._asset_vector = np.zeros(self._coin_number+1)
-
-        self._last_omega = np.zeros((self._coin_number+1,))
-        self._last_omega[0] = 1.0
+        #2022.02.27,消除现金影响，不设置现金
+        # self._last_omega = np.zeros((self._coin_number+1,))
+        # self._last_omega[0] = 1.0
+        self._last_omega = np.ones((self._coin_number,))/self._coin_number
 
         if self.__class__.__name__=="BackTest":
             # self._initialize_logging_data_frame(initial_BTC)
@@ -90,6 +91,7 @@ class Trader:
         starttime = time.time()
         omega = self._agent.decide_by_history(self.generate_history_matrix(),
                                               self._last_omega.copy())
+        # print('trader',omega.shape)
         self.trade_by_strategy(omega)
         # if self._agent_type == "nn":
         #     self.rolling_train()

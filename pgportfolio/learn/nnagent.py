@@ -21,12 +21,15 @@ class NNAgent:
         self.__y = tf.placeholder(tf.float32, shape=[None,
                                                      self.__config["input"]["feature_number"],
                                                      self.__coin_number])
-        self.__future_price = tf.concat([tf.ones([self.__net.input_num, 1]),
-                                       self.__y[:, 0, :]], 1)
+        #2022.02.27 20:40消除现金
+        # self.__future_price = tf.concat([tf.ones([self.__net.input_num, 1]),
+        #                                self.__y[:, 0, :]], 1)
+        self.__future_price = self.__y[:, 0, :]
         self.__future_omega = (self.__future_price * self.__net.output) /\
                               tf.reduce_sum(self.__future_price * self.__net.output, axis=1)[:, None]
         # tf.assert_equal(tf.reduce_sum(self.__future_omega, axis=1), tf.constant(1.0))
         self.__commission_ratio = self.__config["trading"]["trading_consumption"]
+        # 2022.02.27 20:40消除现金。21:32更新，此处的1好像指代的的是初始的阶段不扣费，是第一期的意思而不是收费的，所以应当加上。不做修改。
         self.__pv_vector = tf.reduce_sum(self.__net.output * self.__future_price, reduction_indices=[1]) *\
                            (tf.concat([tf.ones(1), self.__pure_pc()], axis=0))
         self.__log_mean_free = tf.reduce_mean(tf.log(tf.reduce_sum(self.__net.output * self.__future_price,
@@ -171,7 +174,9 @@ class NNAgent:
                                                     self.__y: y,
                                                     self.__net.previous_w: last_w,
                                                     self.__net.input_num: x.shape[0]})
-        setw(results[-1][:, 1:])
+        #2022:02.27,21:38，已经全是有价资产，故直接从0开始。消除现金影响
+        # setw(results[-1][:, 1:])
+        setw(results[-1][:, :])
         return results[:-1]
 
     # save the variables path including file name
@@ -185,7 +190,9 @@ class NNAgent:
         c=0
         w_t = self.__future_omega[:self.__net.input_num-1]  # rebalanced
         w_t1 = self.__net.output[1:self.__net.input_num]
-        mu = 1 - tf.reduce_sum(tf.abs(w_t1[:, 1:]-w_t[:, 1:]), axis=1)*c
+        #2022.02.27 21:15 尝试删除现金，已经不存在现金资产，所以直接使用全部收益
+        # mu = 1 - tf.reduce_sum(tf.abs(w_t1[:, 1:]-w_t[:, 1:]), axis=1)*c
+        mu = 1 - tf.reduce_sum(tf.abs(w_t1[:, :] - w_t[:, :]), axis=1) * c
         """
         mu = 1-3*c+c**2
 
@@ -212,6 +219,10 @@ class NNAgent:
         assert not np.any(np.isnan(history))
         tflearn.is_training(False, self.session)
         history = history[np.newaxis, :, :, :]
+        #2022.02.27，22:07 消除现金影响
+        # return np.squeeze(self.session.run(self.__net.output, feed_dict={self.__net.input_tensor: history,
+        #                                                                  self.__net.previous_w: last_w[np.newaxis, 1:],
+        #                                                                  self.__net.input_num: 1}))
         return np.squeeze(self.session.run(self.__net.output, feed_dict={self.__net.input_tensor: history,
-                                                                         self.__net.previous_w: last_w[np.newaxis, 1:],
+                                                                         self.__net.previous_w: last_w[np.newaxis, :],
                                                                          self.__net.input_num: 1}))
