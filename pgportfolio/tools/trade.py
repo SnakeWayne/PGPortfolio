@@ -36,6 +36,7 @@ def get_coin_name_list(config, online):
     return coins
 
 ##2022.02.27，21:47强制不扣费，同时消除现金影响。
+##2022.02.28，16:27之前只是消除影响，现在是真的不扣费，后面好像确实是因为每日频繁调仓结果给我把费都给扣光了。傻了
 def calculate_pv_after_commission(w1, w0, commission_rate):
     """
     @:param w1: target portfolio vector, first element is btc
@@ -43,13 +44,15 @@ def calculate_pv_after_commission(w1, w0, commission_rate):
     @:param commission_rate: rate of commission fee, proportional to the transaction cost
     """
     mu0 = 1
-    mu1 = 1 - 2*commission_rate + commission_rate ** 2
-    while abs(mu1-mu0) > 1e-10:
-        mu0 = mu1
-        mu1 = (1  -
-            (2 * commission_rate - commission_rate ** 2) *
-            np.sum(np.maximum(w0[:] - mu1*w1[:], 0))) / \
-            (1)
+    ##2022.02.28，16:27之前只是消除影响，现在是真的不扣费，后面好像确实是因为每日频繁调仓结果给我把费都给扣光了。傻了。现在，强制不扣费
+    mu1 =1
+    # mu1 = 1 - 2*commission_rate + commission_rate ** 2
+    # while abs(mu1-mu0) > 1e-10:
+    #     mu0 = mu1
+    #     mu1 = (1  -
+    #         (2 * commission_rate - commission_rate ** 2) *
+    #         np.sum(np.maximum(w0[:] - mu1*w1[:], 0))) / \
+    #         (1)
     return mu1
 
 # def calculate_pv_after_commission(w1, w0, commission_rate):
